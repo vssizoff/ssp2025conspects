@@ -1,0 +1,70 @@
+\section{STL}
+
+\subsection{Множество}
+
+\begin{center}
+\tikzset{every loop/.style={min distance=15mm,looseness=10}}
+\begin{tikzpicture}[-latex ,auto ,node distance =0.7cm and 5cm, on grid,semithick ,
+state/.style ={circle, draw, color=blue!80 , fill=blue!80, text=white , minimum width =0.2 cm}, scale=.8, every node/.style={scale=.8}]
+\path (0, 0) node[state] (a1) [label=left:$\alpha_1$]{};
+\path (0, -.7) node[state] (a2) [label=left:$\alpha_2$]{};
+\path (0, -1.4) node[state] (a3) [label=left:$\alpha_3$]{};
+\path (.309, -1.9) node (adots) [label=left:$\vdots$]{};
+\path (0, -1.4) node[state] (a3) [label=left:$\alpha_3$]{};
+\path (0, -3.3) node[state] (an) [label=left:$\alpha_n$]{};
+\path (0, -2.6) node[state, fill=blue!15, draw=blue!30] (ap) {};
+\draw[<-, thick] (-.2,-2.6) to[out=180,in=0] ++ (-4.5, 0);
+\path (-4.9, -2.6) node[state] (aprime) [label=left:$\alpha^\prime$]{};
+\path (-2.9, -2.35) node {\texttt{se.insert($\alpha^\prime$)}};
+\draw (0,-1.65) ellipse (1.4 and 2.8);
+\draw[<-, thick] (.2,0) to[out=0,in=180] ++ (2, 0);
+\draw[<-, thick] (.2,-3.3) to[out=0,in=180] ++ (2, 0);
+\path (2.2, 0) node[right] (beg) {\texttt{se.begin()}};
+\path (2.2, -3.28) node[right] (end) {\texttt{se.end()}};
+\end{tikzpicture}
+\end{center}
+
+Множетсво инициализируется как \texttt{set<T> se}. Представляет собой стандартное математическое множетсво. Можно добавлять элементы с~помощью \texttt{se.insert($x$)}, удалять с помощью \texttt{se.erase($x$)} или \texttt{se.erase($p_x$)}, где $p_x$ --- указатель на элемент со значением $x$. Методы \texttt{se.begin()} и \texttt{se.end()} возвращают указатели на начальный и конечный элемент множества соответственно. Начальный элемент в множестве \texttt{int}-ов является минимальным в множестве. Метод \texttt{se.find($x$)} возвращает указатель на~элемент со значением $x$, то есть $p_x$. Если же такого элемента в множестве нет, то вернётся указатель на последний элемент --- \texttt{se.end()}. В STL есть такая структура данных, как мультимножество, \texttt{multiset<T>~mse}. Оно отличается от обычного множества тем, что может хранить неуникальные элементы. Теперь удаление элемента по значению влечёт удаление всех его вхождений.
+
+Все операции работают за $O(\alpha \cdot \log n)$, где $n$ --- размер множества, а $\alpha$ --- оценка сравнения ключей. Например, для целых чисел $\alpha = O(1)$, а для строк $\alpha = O(\abs{s})$.
+
+\subsection{Карта/словарь}
+
+Карта представляет собой набор пар $(\alpha_i, \beta_i)$, в которых по умолчанию $\beta_i = 0$. Карта инициализируется как \texttt{map<T1, T2> ma}. При этом, к элементам можно обращаться следующим образом: \texttt{ma[$\alpha_i$]$\, = \beta_i$}. Пары внутри \texttt{map}-а (как и элементы внутри \texttt{set}-а) сортируются по возрастанию. А пары сортируются по первому элементу, поэтому \texttt{ma.begin()} указывает на пару с наименьшим первым элементом.
+
+\begin{center}
+\tikzset{every loop/.style={min distance=15mm,looseness=10}}
+\begin{tikzpicture}[-latex ,auto ,node distance =0.7cm and 5cm, on grid,semithick ,
+state/.style ={circle, draw, color=blue!80, fill=blue!80, text=white , minimum width =0.2 cm},
+state2/.style ={circle, draw, color=red!80 , fill=red!80, text=white , minimum width =0.2 cm}]
+\path (0, 0) node[state] (a1) [label=left:$\alpha_1$]{};
+\path (0, -.7) node[state] (a2) [label=left:$\alpha_2$]{};
+\path (0, -1.4) node[state] (a3) [label=left:$\alpha_3$]{};
+\path (.309, -1.9) node (adots) [label=left:$\vdots$]{};
+\path (0, -1.4) node[state] (a3) [label=left:$\alpha_3$]{};
+\path (0, -2.6) node[state, fill=blue!15, draw=blue!30] (ap) [label=left:$\alpha_i$]{};
+\path (.309, -3.1) node[] (adots2) [label=left:$\vdots$]{};
+\path (0, -3.8) node[state] (an) [label=left:$\alpha_n$]{};
+\draw[->, thick] (.2, 0) to[out = 0, in = 180] ++ (1.8, 0);
+\draw[->, thick] (.2, -.7) to[out = 0, in = 180] ++ (1.8, 0);
+\draw[->, thick] (.2, -1.4) to[out = 0, in = 180] ++ (1.8, 0);
+\draw[->, thick] (.2, -2.6) to[out = 0, in = 180] ++ (1.8, 0);
+\draw[->, thick] (.2, -3.8) to[out = 0, in = 180] ++ (1.8, 0);
+
+\path (2.2, 0) node[state2] (a1) [label=right:$\beta_1$]{};
+\path (2.2, -.7) node[state2] (a2) [label=right:$\beta_2$]{};
+\path (2.2, -1.4) node[state2] (a3) [label=right:$\beta_3$]{};
+\path (2.51, -1.9) node (adots) [label=left:$\vdots$]{};
+\path (2.2, -1.4) node[state2] (a3) [label=right:$\beta_3$]{};
+\path (2.2, -2.6) node[state2, fill=red!15, draw=red!30] (ap) [label=right:$\beta_i$]{};
+\path (2.51, -3.1) node (adots2) [label=left:$\vdots$]{};
+\path (2.2, -3.8) node[state2] (an) [label=right:$\beta_n$]{};
+\end{tikzpicture}
+\end{center}
+
+Все операции в \texttt{map}-е работают за $O(\log n)$, даже получение элемента. Поэтому стоит минимизировать их количество. Контейнер \texttt{map} в полную силу раскрывается, если в качестве ключей использовать строки. Тогда мы строкам можем очень быстро сопоставлять числа. Хранить в массиве это было бы невозможно, так как строки могут состоять из очень большого количества символов; в \texttt{map}-е же такой проблемы не возникает.
+
+\subsection{Очередь с приоритетом}
+
+STL предоставляет также контейнер \texttt{priority\_queue}, который, помимо функционала обычной очереди, поддерживает определённый порядок элементов: в голове очереди (по \mintinline{cpp}{q.front()}) находится наибольший элемент. Инициализируется так: \texttt{priority\_queue<T> q}, поддерживает методы \texttt{front()} за $O(1)$ и \texttt{push\_back()}, \texttt{pop\_back()} за $O(\log n)$.
+

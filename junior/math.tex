@@ -1,0 +1,137 @@
+\section{Математика}
+
+\subsection{Бинарное возведение в степень}
+
+Алгоритм бинарного возведения в степень основан на следующих очевидных свойствах:
+
+\[
+    x^{2n} = (x^2)^n,\quad x^{2n + 1} = x \cdot (x^2)^n.
+\]
+
+\begin{minted}[linenos, mathescape]{cpp}
+int bin_pow(int x, int n)
+{
+    if (n == 0) return 1;
+    if (n % 2 == 0) return bin_pow(x * x, n / 2); // $x^{2n} = (x^2)^n$
+    return x * bin_pow(x * x, n / 2); // $x^{2n + 1} = x \cdot (x^2)^n$
+}
+\end{minted}
+
+Таким образом каждый раз мы уменьшаем степень, в которую нужно возвести число, в 2 раза, значит функция отработает за $O(\log n)$.
+
+Чтобы не возникло переполнения, следует каждую операцию брать по~модулю $p$:
+
+\begin{minted}[linenos, mathescape]{cpp}
+int bin_pow_modp(int x, int n)
+{
+    if (n == 0) return 1;
+    if (n % 2 == 0) return bin_pow_modp((x * x) % p, n / 2);
+    return (x * bin_pow_modp((x * x) % p, n / 2)) % p;
+}
+\end{minted}
+
+\subsection{Алгоритм Евклида}
+
+Обозначим $\gcd(a, b)$ --- наибольший общий делитель чисел $a, b$, а через $\lcm(a, b)$ --- наименьшее общее кратное $a$ и $b$. Алгоритм Евклида позволяет за~$O(\log \min\{a, b\})$ находить $\gcd(a, b)$, основываясь на свойстве $\gcd(a, b) = \gcd(b, a \bmod b)$. Функция \mintinline{cpp}{gcd} принимает два аргумента: $a$ и $b$, причём поддерживается $a \geqslant b$.
+
+\begin{minted}[linenos, mathescape]{cpp}
+int gcd(int a, int b)
+{
+    if (a < b) swap(a, b);
+    if (b == 0) return a;
+    return gcd(b, a % b);
+}
+\end{minted}
+
+\noindent
+Наименьшее общее кратное можно найти с помощью соотношения
+\[
+    \gcd(a, b) \cdot \lcm(a, b) = a \cdot b.
+\]
+
+Если обычный алгоритм Евклида возвращает $\gcd(a, b)$, то расширенный позволяет найти коэффициенты $x$ и $y$ такие, что $ax + by = \gcd(a, b)$.
+
+Для этого нам нужно понять, как эти числа меняются от пары $(a, b)$ к паре $(b, a \bmod b)$. Пусть $(x, y)$ --- искомые коэффициенты для пары $(a, b)$, $(x_1, y_1)$ --- для пары $(a \bmod b, b)$. Тогда 
+\[
+    \begin{cases}
+        \gcd(a \bmod b, b) = b \cdot x_1 + (a \bmod b) \cdot y_1,\\ 
+        \gcd(a, b) = x \cdot a + y \cdot b.
+    \end{cases}
+\]
+
+Откуда
+
+\[
+    \gcd(a, b) = b \cdot x_1 + \left(a - \left\lfloor\frac{a}{b}\right\rfloor b\right) \cdot y_1 = y_1 \cdot a + \left(x_1 - y_1 \cdot \left\lfloor\frac{a}{b}\right\rfloor\right) \cdot b
+\]
+ 
+\begin{minted}[linenos, mathescape]{cpp}
+tuple<int, int, int> ext_gcd(int a, int b)
+{
+    if (b == 0) return {a, 1, 0};
+    int d, x1, y1;
+    tie(d, x1, y1) = ext_gcd(b, a % b);
+    return {d, y1, x1 - y1 * (a / b)};
+}
+\end{minted}
+
+С помощью расширенного алгоритма можно искать решения диофантовых уравнений, ведь все решения уравнения
+\[
+    a\cdot x + b \cdot y = \gcd(a, b)
+\]
+представляются в виде
+\[
+\begin{array}{l}\displaystyle
+        x = x_1 + \frac{a}{\gcd(a, b)} \cdot k\\ \displaystyle
+        y = y_1 - \frac{b}{\gcd(a, b)} \cdot k
+\end{array},\quad k \in \mathbb{Z}.
+\]
+
+А коэффициенты $x_1$, $y_1$ и $\gcd(a, b)$ мы знаем из расширенного алгоритма Евклида.
+
+\subsection{Арифметика по модулю}
+
+Пусть $m$ --- натуральное число. Произвольное целое число можно поделить на $m$ с остатком, который принимает значения $0, 1, \ldots, m - 1$. Разобьём множество целых чисел на $m$ классов, каждый из которых содержит все целые числа, дающие один и тот же остаток при делении на $m$. Это будут так называемые \textit{классы вычетов по модулю $m$}.
+
+\begin{definition}
+    \textit{Обратным элементом} к $a$ по модулю $m$ называется такой элемент $b$, что $a \cdot b \equiv 1 \pmod m$.
+\end{definition}
+
+Ясно, что обратных элементов к данному $a$ может быть (бесконечно) много, однако все они попадают в один класс вычетов, который и обозначается через $a^{-1}$. Если $m$ простое, то находить обратный элемент помогает
+
+\begin{theorem}[Малая теорема Ферма]
+    Если $p$ простое и $a$ целое, то \[a^{p - 1} \equiv 1 \pmod p.\]
+\end{theorem}
+
+Действительно, разделив на $a$ обе части, получим $a^{p - 2} \equiv a^{-1} \pmod p$. А быстро возводить в степень мы уже умеем.
+
+Если же $m$ составное, то обратный к $a$ по модулю $m$ существует тогда и только тогда, когда $\gcd(a, m) = 1$. В этом случае его можно найти, решив диофантово уравнение
+\[
+    ax + my = 1,
+\]
+например, с помощью расширенного алгоритма Евклида. Т.\,к. $my \equiv 0 \pmod m$, то $ax \equiv 1 \pmod m$, т.\,е. $x \equiv a^{-1} \pmod m$ по определению.
+
+\subsection{Биномиальные коэффициенты. Предпосчёт факториалов}
+
+Для быстрого вычисления биномиальных коэффициентов предлагается предпосчитать массив факториалов (по модулю $p$) следующим образом:
+
+\begin{minted}[linenos, mathescape]{cpp}
+vector<int> fact(n, 1);
+
+for (int i = 1; i < n; ++i)
+    fact[i] = (fact[i - 1] * i) % p;
+\end{minted}
+
+\noindent
+Также нам понадобится массив обратных факториалов:
+
+\begin{minted}[linenos, mathescape]{cpp}
+vector<int> inv_fact(n, 1);
+
+inv_fact[n - 1] = bin_pow(fact[n - 1], p - 2);
+
+for (int i = n - 2; i >= 0; --i)
+    inv_fact[i] = inv_fact[i + 1] * (i + 1);
+\end{minted}
+
+
