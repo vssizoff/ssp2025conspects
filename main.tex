@@ -1,5 +1,6 @@
-\documentclass[a5paper, 10pt, twoside]{article}
-\usepackage{import}
+\documentclass{article}
+\usepackage[a5paper, total={5in, 7.5in}]{geometry}
+%\usepackage{input}
 \usepackage{preamble}
 
 \begin{document}
@@ -23,7 +24,7 @@
     {\Large С.\,С.\,Князевский}
     \vspace{.6cm}
     
-    \includegraphics[width=0.4\textwidth]{img/logo.jpg}
+    \inputgraphics[width=0.4\textwidth]{img/logo.jpg}
 
     \vspace*{4cm}
 
@@ -46,24 +47,24 @@
 \tableofcontents
 \newpage
 
-\import{junior/}{linear_algos.tex}
-\import{senior/}{sqrt_optimization.tex}
-\import{junior/}{linear_structs.tex}
-\import{senior/}{seg_tree.tex}
-\import{junior/}{bfs.tex}
-\import{senior/}{dsu.tex}
-\import{junior/}{dfs.tex}
-\import{senior/}{dyn_prog.tex}
-\import{junior/}{short_paths.tex}
-\import{junior/}{bits_opers.tex}
-\import{senior/}{lca.tex}
-\import{junior/}{stl.tex}
-\import{senior/}{bridges.tex}
-\import{junior/}{bin_search.tex}
-\import{senior/}{strings.tex}
-\import{junior/}{dyn_prog.tex}
-\import{junior/}{math.tex}
-\import{senior/}{fenwick.tex}
+\input{junior/linear_algos}
+\input{junior/linear_structs}
+\input{junior/bin_search}
+\input{junior/stl}
+\input{junior/bits_opers}
+\input{junior/bfs}
+\input{junior/dfs}
+\input{junior/short_paths}
+\input{junior/dyn_prog}
+\input{junior/math}
+\input{senior/seg_tree}
+\input{senior/sqrt_optimization}
+\input{senior/fenwick}
+\input{senior/dsu}
+\input{senior/dyn_prog}
+\input{senior/lca}
+\input{senior/bridges}
+\input{senior/strings}
 
 \newpage
 \thispagestyle{empty}
@@ -71,7 +72,9 @@
 % \noindent
 % \topskip0pt
 % \vspace*{\fill}
-% \includegraphics[width=\textwidth]{img/final_photo.jpg}
+% \inputgraphics[width=\textwidth]{img/final_photo.jpg}
 % \vspace*{\fill}
 
 \end{document}
+
+% TODO динамика по цифрам и профилю
