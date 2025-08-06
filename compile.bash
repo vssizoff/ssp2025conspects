@@ -8,6 +8,6 @@ cp -r ./2025 ./build/
 cd ./build || exit
 
 lualatex -shell-escape main.tex
-lualatex -shell-escape main.tex
+#lualatex -shell-escape main.tex
 
 cp ./main.pdf ../main.pdf
