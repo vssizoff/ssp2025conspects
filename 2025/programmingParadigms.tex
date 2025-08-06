@@ -14,7 +14,9 @@
 
 - \textbf{Сложен} в поддержке крупных проектов
 
-\subsubsection{Объектно-ориентированное программирование (ООП)}
+- Есть переменные в \textbf{глобальной области}
+
+\subsection{Объектно-ориентированное программирование (ООП)}
 Думаю, любой начинающий программист задумывался: ``Можно ли создать свой тип данных?'', и ответ - да.
 Главная черта ООП - создание своих типов данных
 
@@ -24,12 +26,202 @@
 Вообще всё, что не является примитивом (то есть числом, ссылкой или указателем)
 В олимпиадном программировании самый подходящий пример для ООП пример - СНМ.
 
-В c++ есть две синтаксические конструкции для создания типов данных: структуры (пришли ещё из языка си) и классы.\\
-\textbf{Начнём со структур:}\\
+В c++ есть две синтаксические конструкции для создания типов данных: структуры (пришли ещё из языка си) и классы.
+
+\vspace{0px}
+\subsubsection{Начнём со структур}
+
 Базовый синтаксис:
 
 \begin{minted}[linenos, mathescape]{cpp}
 struct Struct { // где struct - ключевое слово, Struct - имя структуры
 
+}; // почему-то в конце нужни ';'
+\end{minted}
+
+Внутри структуры можно хранить данные (они называются не переменными, а полями):
+
+\begin{minted}[linenos, mathescape]{cpp}
+struct Struct {
+    int n = 0; // можно ставить значение по умолчанию
+    std::vector<int> array; // можно использовать любые типы данных
 };
+
+int main() {
+    Struct test; // создание объекта структуры
+    test.n = 54; // присвоение
+    cout << test.n; // вывод
+    test.array.resize(10); // можно вызывать методы у полей
+}
+\end{minted}
+
+У структуры могут быть методы (функции), например push\_back у std::vector
+
+\begin{minted}[linenos, mathescape]{cpp}
+struct Struct {
+    int n = 0;
+    std::vector<int> array;
+
+    void setSize(int n_) {
+        n = n_;
+        array.resize(n_);
+    }
+};
+
+int main() {
+    Struct test;
+    test.setSize(10);
+}
+\end{minted}
+
+Когда мы создаём std::vector, мы часто указываем длину (std::vector array(10)), когда мы так делаем, мы вызываем
+конструктор - особый метод, который вызывается при создании объекта структуры/класса.
+У него нет возвращаемого типа (даже не void), а называется он так же как и структура/класс
+
+\begin{minted}[linenos, mathescape]{cpp}
+struct Struct {
+    int n = 0;
+    std::vector<int> array;
+
+    Struct(int n_) {
+        n = n_;
+        array.resize(n_);
+    }
+};
+
+int main() {
+    Struct test(10);
+    Struct test2; // будет ошибка
+}
+\end{minted}
+
+Конструкторов может быть много:
+
+\begin{minted}[linenos, mathescape]{cpp}
+struct Struct {
+    int n = 0;
+    std::vector<int> array;
+
+    Struct() {}
+
+    Struct(int n_) {
+        n = n_;
+        array.resize(n_);
+    }
+
+    Struct(const std::vector<int>& array_) {
+        n = array_.size();
+        array = array_;
+    }
+};
+
+int main() {
+    Struct test0;
+    Struct test1(10);
+    std::vector<int> array(10);
+    Struct test2(array);
+}
+\end{minted}
+
+\subsubsection{Инкапсуляция — сокрытие данных}
+
+В структурах присутствуют модификаторы доступа: public, private, protected.
+По-умолчанию все поля и методы - public, но давайте представим, что мы бы могли менять переменную, отвечающую за размер,
+в таком случае мы бы могли назначить, например, отрицательное значение, и этим всё сломать.
+Давайте, для примера, в нашей структуре сделаем так, чтобы нельзя было менять n вне зависимости от array.
+Чтобы изменить размер, придётся вызывать setSize.
+
+\begin{minted}[linenos, mathescape]{cpp}
+struct Struct {
+private:
+    int n_ = 0; /* private поля и методы принято маркировать _ в конце
+        имени, но это не обязательно */
+    std::vector<int> array_;
+
+public:
+    int getSize() {
+        return n;
+    }
+
+    void setSize(int n0) {
+        n_ = n0;
+        array_.resize(n0);
+    }
+};
+
+int main() {
+    Struct test;
+    test.setSize(10);
+    cout << test.getSize();
+    cout << test.n_; // будет ошибка
+    test.n_ = 54; // будет ошибка
+}
+\end{minted}
+
+Есть ещё protected, но он нужен при наследовании, а на олимпиадах в его использовании смысла нет.
+
+\subsubsection{Классы}
+
+В c++ классы и структуры различаются только модификаторами доступа по умолчанию в структурах - public, а в классах - private
+
+\begin{minted}[linenos, mathescape]{cpp}
+class Struct {
+private: // можно не писать
+    int n = 0;
+    std::vector<int> array;
+
+public:
+    int getSize() {
+        return n;
+    }
+
+    void setSize(int n_) {
+        n = n_;
+        array.resize(n_);
+    }
+};
+\end{minted}
+
+\subsubsection{Константные методы}
+
+Пусть дан код:
+
+\begin{minted}[linenos, mathescape]{cpp}
+class Struct {
+    int n = 0;
+    std::vector<int> array;
+
+public:
+    int getSize() {
+        return n;
+    }
+
+    void setSize(int n_) {
+        n = n_;
+        array.resize(n_);
+    }
+};
+
+void func(const Struct& struct) {
+    struct.getSize() // даст ошибку
+}
+\end{minted}
+
+Этот код не скомпилируется, так как метод getSize не константен.
+\textit{Константные методы} - методы, которые не меняют поля класса (могут вызывать только константные методы).
+Это можно исправить так:
+
+\begin{minted}[linenos, mathescape]{cpp}
+    int getSize() const {
+        return n;
+    }
+\end{minted}
+
+Также константные методы лучше помечать [[nodiscard]].
+Это заставит компилятор выдать warning, если возвращаемое значение не было использовано.
+
+\begin{minted}[linenos, mathescape]{cpp}
+    [[nodiscard]] int getSize() const {
+        return n;
+    }
 \end{minted}
