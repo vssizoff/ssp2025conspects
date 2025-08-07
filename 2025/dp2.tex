@@ -6,17 +6,30 @@
 \end{problem}
 Пусть $dp[size][first]$ - количество хороших чисел длины $size$ начинающиеся с цифры $first$
 
+\textbf{База:}
+
+$$\forall d \in [0; 9]: dp[1][d] = 1$$
+
+\textbf{Переход:}
+
 $$dp[size][first] = \sum_{c = first}^9 dp[size - 1][c]$$
 
 \begin{minted}[linenos, mathescape]{cpp}
 int func(int p, int pf) {
+    // p — текущая позиция (индекс в строке n)
+    // pf — предыдущая цифра (или минимальная допустимая цифра для текущей позиции)
+    // Т.е. текущая цифра должна быть >= pf
     int ans = 0;
+    // Если мы поставим цифру < n[p], то остальные цифры можно выбрать любым "хорошим" способом
     for (int first = pf; first < n[p] - '0'; ++first) {
         ans += dp[n.size() - p][first];
     }
+    // Теперь рассмотрим случай, когда ставим цифру == n[p]
     if (pf <= n[p] - '0' && p + 1 != n.size())
-        ans += func(p + 1, n[p] - '0');
-    else if (pf <= n[p] - '0') ans++;
+        ans += func(p + 1, n[p] - '0'); // Мы ещё не в последней позиции
+    else if (pf <= n[p] - '0')
+        ans++; // Мы на последней цифре, и n[p] >= pf — значит,
+        // само число подходит
     return ans;
 }
 \end{minted}
@@ -128,19 +141,21 @@ $$\sum_{mask} dp[m - 1][mask]$$
 где mask - все маски без подпоследовательностей из нулей нечётной длины
 
 \begin{minted}[linenos, mathescape]{cpp}
-std::vector dp(m, std::vector<int>(1 << n));
+std::vector dp(m, std::vector<long long>(1 << n));
 dp[0][0] = 1;
 for (int i = 1; i < m; ++i) {
     for (int mask = 0; mask < (1 << n); ++mask) {
         for (int mask2 = 0; mask2 < (1 << n); ++mask2) {
             if (f[mask2][mask]) dp[i][mask] += dp[i - 1][mask2];
+            // если можем перейти от $mask2$ к $mask$, то прибавляем
         }
     }
 }
-int ans = 0;
-for (int mask = 0; mask < (1 << n); ++mask) {
+long long ans = 0;
+for (int mask = 0; mask < (1 << n); ++mask) { // считаем ответ
     bool even0 = false, containsEvenSequences = false;
-    for (int i = 0; i < n; ++i) {
+    for (int i = 0; i < n; ++i) { // проверка на наличае
+        // подпоследовательностей из нулей нечётной длины
         if (!(mask & (1 << i))) {
             even0 = !even0;
             continue;
@@ -150,8 +165,13 @@ for (int mask = 0; mask < (1 << n); ++mask) {
             break;
         }
     }
-    if (containsEvenSequences) continue;
+    if (containsEvenSequences || even0) continue; // если нашли или
+    // заканчивается нечетным количеством нулей
     ans += dp[m - 1][mask];
 }
 cout << ans;
 \end{minted}
+
+\begin{problem}
+
+\end{problem}
